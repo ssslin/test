@@ -1,4 +1,28 @@
 <?php
+
+
+/**
+ * 文章内容过滤
+ *
+ * @param $content
+ * @return null|string|string[]
+ */
+ function _filterContent($content,$replaceImg = true)
+{
+	if ($replaceImg == true)
+	{
+		preg_match_all('/<img.+src=\"(.*)\"/iU', $content, $temp);
+		foreach ($temp[1] as $key => $val) {
+			$tt = preg_replace('#http://[a-zA-Z]+\.[a-zA-Z]+\.com#i', '', $val);
+			$content = preg_replace('#' . $val . '#i',  template::__imageResizeMax($tt, 600, 100000), $content);
+		}
+	}
+	//去除正文的a标签
+	$str1 = preg_replace("/<a[^>]*>/","",$content);
+	$newContent = preg_replace("/<\/a>/","", $str1);
+	return $newContent;
+}
+
 header('Content-Type:text/plain;charset=utf-8');
 $str = '<script type="text/javascript" src="dd.js"></script>
 
